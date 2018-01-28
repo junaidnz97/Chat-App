@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+			
+		Chat-App
+	
+	</title>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+	<link rel="stylesheet" type="text/css" href="/public/styles.css">
+</head>
+<body>
+
+	
+
+
+	<div id="chat-box">
+
+		<div id="chat-window">
+
+			<div id="output"> </div>
+			
+			<div id="broadcast"> </div>
+			
+		</div>
+
+		<input type="text" id="handle" placeholder="User Name">
+		<input type="text" id="message" placeholder="type message...">
+		<button id="send">Send</button>
+	</div>
+
+
+
+	<script>
+		var socket=io.connect("http://localhost:9090");
+		var message,handle,button,output,broadcast;
+		message=document.getElementById("message");
+		handle=document.getElementById("handle");
+		button=document.getElementById("send");
+		output=document.getElementById("output");
+		broadcast=document.getElementById("broadcast");
+
+		//console.log("hello");
+		button.addEventListener("click",function(){
+
+			console.log("working");
+			socket.emit("chat",{
+
+				message:message.value,
+				handle:handle.value
+
+			});
+			broadcast.innerHTML="";	
+			message.value="";
+
+			console.log("jcd");	
+		});
+		//console.log("jadsb");
+
+		message.addEventListener("keypress",function(){
+			socket.emit("type",{
+				handle:handle.value
+			});
+			console.log("keypress");
+		});
+
+		socket.on("chat",function(data){
+			output.innerHTML+="<p><strong>"+data.handle+":</strong>"+data.message+"</p>";
+			
+		});
+		socket.on("type",function(data){
+			broadcast.innerHTML="<p><strong>"+data.handle+"</strong>"+" is typing....</p>";
+		});
+
+	</script>
+
+
+</body>
+</html>
